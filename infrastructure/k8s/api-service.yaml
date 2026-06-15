@@ -1,0 +1,39 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: arrowera-api
+  namespace: arrowera
+spec:
+  selector:
+    app: arrowera-api
+  ports:
+    - port: 80
+      targetPort: 8000
+      protocol: TCP
+  type: ClusterIP
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: arrowera-api-hpa
+  namespace: arrowera
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: arrowera-api
+  minReplicas: 2
+  maxReplicas: 10
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 70
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: 80

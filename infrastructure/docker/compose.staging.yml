@@ -1,0 +1,7 @@
+services:
+  api:
+    environment:
+      ENVIRONMENT: staging
+  web:
+    environment:
+      NODE_ENV: production

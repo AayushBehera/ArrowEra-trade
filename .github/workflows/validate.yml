@@ -1,0 +1,77 @@
+name: Validate
+on:
+  pull_request:
+  push:
+    branches: [main]
+    tags: ["v*"]
+
+jobs:
+  # -------------------------------------------------------
+  # Frontend: lint, typecheck, test, build
+  # -------------------------------------------------------
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm run test -- --coverage --coverageThreshold='{"global":{"branches":60,"functions":60,"lines":60}}'
+      - run: npm run build
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-build
+          path: apps/web/.next/
+
+  # -------------------------------------------------------
+  # Backend: lint, test with coverage
+  # -------------------------------------------------------
+  backend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r services/api/requirements.txt
+      - name: Lint (ruff)
+        run: ruff check services/api/app/
+      - name: Type check (basic)
+        run: python -c "from services.api.app.main import app; print('Import OK')"
+      - name: Run tests with coverage
+        run: pytest services/api/ -v --cov=services/api/app --cov-report=term-missing --cov-fail-under=60
+        env:
+          DATABASE_URL: "sqlite+aiosqlite:///./test.db"
+          ENVIRONMENT: "test"
+
+  # -------------------------------------------------------
+  # Docker: build images
+  # -------------------------------------------------------
+  docker:
+    needs: [frontend, backend]
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/'))
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Build API image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: infrastructure/docker/Dockerfile.api
+          push: false
+          tags: arrowera/api:${{ github.sha }}
+      - name: Build Web image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: infrastructure/docker/Dockerfile.web
+          push: false
+          tags: arrowera/web:${{ github.sha }}

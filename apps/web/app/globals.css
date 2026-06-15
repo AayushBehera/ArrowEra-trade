@@ -1,0 +1,50 @@
+@import "tailwindcss";
+
+@theme {
+  --color-background: #f2f0e8;
+  --color-foreground: #172019;
+  --color-muted: #6d756e;
+  --color-panel: #fbfaf4;
+  --color-line: #d8d5c9;
+  --color-signal: #ff5c35;
+  --color-green: #1b6f4a;
+  --color-red: #c0392b;
+  --color-card: #fbfaf4;
+  --color-card-foreground: #172019;
+  --color-primary: #172019;
+  --color-primary-foreground: #f2f0e8;
+  --color-secondary: #d8d5c9;
+  --color-secondary-foreground: #172019;
+  --color-destructive: #c0392b;
+  --color-destructive-foreground: #f2f0e8;
+  --color-accent: #ff5c35;
+  --color-accent-foreground: #ffffff;
+  --color-border: #d8d5c9;
+  --color-input: #d8d5c9;
+  --color-ring: #ff5c35;
+  --color-sidebar: rgba(242, 240, 232, 0.92);
+  --color-sidebar-foreground: #172019;
+  --color-sidebar-border: #d8d5c9;
+  --color-chart-1: #ff5c35;
+  --color-chart-2: #1b6f4a;
+  --color-chart-3: #2563eb;
+  --color-chart-4: #9333ea;
+  --color-chart-5: #eab308;
+  --radius-sm: 0.25rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+  --font-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "DM Mono", ui-monospace, monospace;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+}
+
+@import url("https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700&display=swap");

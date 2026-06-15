@@ -1,0 +1,1 @@
+{"name":"@arrowera/sdk","version":"0.2.0","private":true,"type":"module","exports":"./src/index.ts","scripts":{"build":"tsc -p tsconfig.json","lint":"tsc -p tsconfig.json","test":"node --test","typecheck":"tsc -p tsconfig.json"},"dependencies":{"@arrowera/types":"*"},"devDependencies":{"typescript":"5.8.3"}}

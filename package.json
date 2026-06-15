@@ -1,0 +1,32 @@
+{
+  "name": "arrowera-trade",
+  "version": "0.2.0",
+  "private": true,
+  "packageManager": "npm@11.6.2",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "turbo dev",
+    "build": "turbo build",
+    "lint": "turbo lint && npm run lint:backend",
+    "lint:backend": "python -m ruff check services/api services/agents",
+    "test": "turbo test && npm run test:backend",
+    "test:backend": "python -m pytest services/api/tests services/agents/tests --cov=services/api/app --cov=services/agents/arrowera_agents --cov-report=term-missing --cov-fail-under=80",
+    "format": "prettier --write . && python -m ruff format services/api services/agents",
+    "typecheck": "turbo typecheck",
+    "db:migrate": "python -m services.api.app.migrate",
+    "start:backend": "python -m uvicorn services.api.app.main:app --host 0.0.0.0 --port 8000",
+    "dev:backend": "python -m uvicorn services.api.app.main:app --reload --host 0.0.0.0 --port 8000"
+  },
+  "devDependencies": {
+    "prettier": "3.5.3",
+    "turbo": "2.5.4",
+    "typescript": "5.8.3"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "npm": ">=10.0.0"
+  }
+}

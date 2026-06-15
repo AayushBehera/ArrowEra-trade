@@ -1,0 +1,36 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: arrowera-ingress
+  namespace: arrowera
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - api.arrowera.com
+        - trade.arrowera.com
+      secretName: arrowera-tls
+  rules:
+    - host: api.arrowera.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: arrowera-api
+                port:
+                  number: 80
+    - host: trade.arrowera.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: arrowera-web
+                port:
+                  number: 80

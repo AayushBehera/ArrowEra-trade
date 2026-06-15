@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: arrowera-worker
+  namespace: arrowera
+  labels:
+    app: arrowera-worker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: arrowera-worker
+  template:
+    metadata:
+      labels:
+        app: arrowera-worker
+    spec:
+      containers:
+        - name: worker
+          image: arrowera/api:latest
+          command: ["python", "-m", "services.api.app.queue.worker"]
+          envFrom:
+            - configMapRef:
+                name: arrowera-config
+            - secretRef:
+                name: arrowera-secrets
+          resources:
+            requests:
+              cpu: 250m
+              memory: 512Mi
+            limits:
+              cpu: 1000m
+              memory: 2Gi
